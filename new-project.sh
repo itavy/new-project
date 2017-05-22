@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex;
 BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master/"
 
 # istanbul
