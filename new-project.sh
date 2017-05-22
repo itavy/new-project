@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex;
+set -e;
 BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master/"
 
 # istanbul
@@ -76,25 +76,25 @@ if [ ! -f "LICENSE.md" ]; then
   LICENSE_TYPE=$(cat .licensetype);
   if [ "$LICENSE_TYPE" == "ISC" ]; then
     curl -sq "$BASE_REPO/license-template-isc" -o LICENSE.md;
-    sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} ${PROJ_AUTHOR_EMAIL}/" LICENSE.md;
+    sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
+    sed -i "s/@/.at./" LICENSE.md;
   else
     if [ "$LICENSE_TYPE" == "MIT" ]; then
       curl -sq "$BASE_REPO/license-template-mit" -o LICENSE.md;
-      sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} ${PROJ_AUTHOR_EMAIL}/" LICENSE.md
+      sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
+      sed -i "s/@/.at./" LICENSE.md;
     fi
   fi
 fi
 
 SETUP_GIT=$(cat .gitrepo);
 if [ ! -d ".git" ]; then
-  if [ "" != "$SETUP_GIT" ]; then
-    git init;
-    git config user.name "$PROJ_AUTHOR_NAME";
-    git config user.email "$PROJ_AUTHOR_EMAIL"
-    git config push.followTags true
-  fi
-  git add .;
-  git commit -s -m "project skeleton setup";
+  git init;
+  git config user.name "$PROJ_AUTHOR_NAME";
+  git config user.email "$PROJ_AUTHOR_EMAIL"
+  git config push.followTags true
 fi
+git add .;
+git commit -s -m "project skeleton setup";
 
 rm -rf .gitname .gitemail .gitrepo .licensetype

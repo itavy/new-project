@@ -21,9 +21,13 @@ if (Object.hasOwnProperty.call(origPackageJson, 'repository')) {
   externalInfo.gitRepo = origPackageJson.repository.url.split('//')[1].split('@')[0];
 }
 if (Object.hasOwnProperty.call(origPackageJson, 'license')) {
-  if (origPackageJson.license instanceof String) {
+  if (typeof origPackageJson.license === 'string') {
     externalInfo.license = origPackageJson.license.toUpperCase();
+  } else {
+    console.log('no string');
   }
+} else {
+  console.log('no license');
 }
 
 fs.writeFileSync('./package.json', JSON.stringify(origPackageJson, null, ' '));
