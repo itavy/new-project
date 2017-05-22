@@ -4,7 +4,7 @@ BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master/"
 
 # istanbul
 if [ ! -f ".istanbul.yml" ]; then
-  curl "$BASE_REPO/istambul-template.yml" -o istambul-template.yml;
+  curl -sq "$BASE_REPO/istambul-template.yml" -o istambul-template.yml;
 fi
 
 # mocha
@@ -13,11 +13,11 @@ if [ ! -d "test" ]; then
   touch test/index.js;
 fi
 if [ ! -f "test/mocha.opts" ]; then
-  curl "$BASE_REPO/mocha-template.opts" -o test/mocha.opts;
+  curl -sq "$BASE_REPO/mocha-template.opts" -o test/mocha.opts;
 fi
 
 # gitignore
-curl "$BASE_REPO/gitignore" -o .gitignore-template;
+curl -sq "$BASE_REPO/gitignore" -o .gitignore-template;
 if [ -f ".gitignore" ]; then
   echo "" >> ./.gitignore;
 else
@@ -27,11 +27,11 @@ cat .gitignore-template >> ./.gitignore
 rm -rf gitignore-template;
 sed -i '/^\s*$/d' ./gitignore
 TEMP_FILE=$(mktemp);
-cat ./gitignore | sort -u > "${TEMP_FILE}"
+cat ./.gitignore | sort -u > "${TEMP_FILE}"
 mv "${TEMP_FILE}" ./.gitignore;
 
 # npmignore
-curl "$BASE_REPO/npmignore-template" -o npmignore-template;
+curl -sq "$BASE_REPO/npmignore-template" -o npmignore-template;
 if [ -f ".npmignore" ]; then
   echo "" >> .npmignore;
 else
@@ -41,19 +41,19 @@ cat npmignore-template >> .npmignore;
 sed -i '/^\s*$/d' ./npmignore
 rm -rf npmignore-template;
 TEMP_FILE=$(mktemp);
-cat ./npmignore | sort -u > "${TEMP_FILE}"
+cat ./.npmignore | sort -u > "${TEMP_FILE}"
 mv "${TEMP_FILE}" ./.npmignore;
 
 # jsdoc
 if [ ! -f "jsdoc.json" ]; then
-  curl "$BASE_REPO/jsdoc-template.json" -o jsdoc-template.json
+  curl -sq "$BASE_REPO/jsdoc-template.json" -o jsdoc-template.json
 fi
 
 # init project if empty
 if [ ! -f "package.json" ]; then
   npm init;
 fi
-curl "$BASE_REPO/index.js" -o new-project.js
+curl -sq "$BASE_REPO/index.js" -o new-project.js
 node ./new-project.js
 
 npm install @itavy/test-utilities pre-commit eyes jsdoc jaguarjs-jsdoc jsdoc-to-markdown --save-dev;
