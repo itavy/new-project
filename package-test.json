@@ -4,7 +4,6 @@
   "description": "New project skeleton",
   "main": "index.js",
   "scripts": {
-    "postinstall": "./bin/test.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -32,8 +31,5 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1"
-  },
-  "bin": {
-    "new-project": "./bin/test.sh"
   }
 }
