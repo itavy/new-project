@@ -25,7 +25,7 @@ else
 fi
 cat .gitignore-template >> ./.gitignore
 rm -rf gitignore-template;
-sed -i '/^\s*$/d' ./gitignore
+sed -i '/^\s*$/d' ./.gitignore
 TEMP_FILE=$(mktemp);
 cat ./.gitignore | sort -u > "${TEMP_FILE}"
 mv "${TEMP_FILE}" ./.gitignore;
@@ -38,7 +38,7 @@ else
   echo "" > .npmignore;
 fi
 cat npmignore-template >> .npmignore;
-sed -i '/^\s*$/d' ./npmignore
+sed -i '/^\s*$/d' ./.npmignore
 rm -rf npmignore-template;
 TEMP_FILE=$(mktemp);
 cat ./.npmignore | sort -u > "${TEMP_FILE}"

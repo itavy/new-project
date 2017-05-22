@@ -20,8 +20,9 @@ origPackageJson.scripts = Object.assign(origPackageJson.scripts, scripts);
 fs.writeFileSync('./package.json', JSON.stringify(origPackageJson, null, ' '));
 
 let haveToJsdoc = false;
+let jsdocConf;
 try {
-  const jsdocConf = require('./jsdoc-template.json');
+  jsdocConf = require('./jsdoc-template.json');
   haveToJsdoc = true;
 } catch (_) {
   haveToJsdoc = false;
