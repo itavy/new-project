@@ -4,7 +4,8 @@ const fs = require('fs');
 const externalInfo = {
   authorName:  '',
   authorEmail: '',
-  gitRepo:     null,
+  gitRepo:     '',
+  license:     'UNKNOWN',
 };
 const scripts = {
   test:               './node_modules/.bin/mocha',
@@ -16,6 +17,14 @@ const scripts = {
 };
 const origPackageJson = require('./package.json');
 origPackageJson.scripts = Object.assign(origPackageJson.scripts, scripts);
+if (Object.hasOwnProperty.call(origPackageJson, 'repository')) {
+  externalInfo.gitRepo = origPackageJson.repository.url.split('//')[1].split('@')[0];
+}
+if (Object.hasOwnProperty.call(origPackageJson, 'license')) {
+  if (origPackageJson.license instanceof String) {
+    externalInfo.license = origPackageJson.license.toUpperCase();
+  }
+}
 
 fs.writeFileSync('./package.json', JSON.stringify(origPackageJson, null, ' '));
 
@@ -33,9 +42,9 @@ if (haveToJsdoc) {
   jsdocConf.opts.repo = '';
   jsdocConf.opts.sourceRoot = '';
 
-  if (Object.hasOwnProperty.call(origPackageJson, 'repository')) {
-    jsdocConf.opts.repo = origPackageJson.repository.url;
-    jsdocConf.opts.sourceRoot = `${origPackageJson.repository.url}/master/lib`;
+  if (externalInfo.gitRepo !== '') {
+    jsdocConf.opts.repo = externalInfo.gitRepo;
+    jsdocConf.opts.sourceRoot = `${externalInfo.gitRepo}/master/lib`;
   }
 
   fs.writeFileSync('./jsdoc.json', JSON.stringify(jsdocConf, null, ' '));
@@ -56,3 +65,4 @@ if (tempVar !== null) {
 fs.writeFileSync('.gitname', externalInfo.authorName);
 fs.writeFileSync('.gitemail', externalInfo.authorEmail);
 fs.writeFileSync('.gitrepo', externalInfo.gitRepo);
+fs.writeFileSync('.licensetype', externalInfo.license);
