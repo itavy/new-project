@@ -53,7 +53,7 @@ fi
 if [ ! -f "package.json" ]; then
   npm init;
 fi
-curl -sq "$BASE_REPO/index.js" -o new-project.js
+curl -sq "$BASE_REPO/new-project.js" -o new-project.js
 node ./new-project.js
 
 npm install @itavy/test-utilities pre-commit eyes jsdoc jaguarjs-jsdoc jsdoc-to-markdown --save-dev;

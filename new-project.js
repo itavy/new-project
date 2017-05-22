@@ -55,4 +55,4 @@ if (tempVar !== null) {
 
 fs.writeFileSync('.gitname', externalInfo.authorName);
 fs.writeFileSync('.gitemail', externalInfo.authorEmail);
-fs.writeFileSync('.', externalInfo.gitRepo);
+fs.writeFileSync('.gitrepo', externalInfo.gitRepo);
