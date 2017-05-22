@@ -94,7 +94,9 @@ if [ ! -d ".git" ]; then
   git config user.email "$PROJ_AUTHOR_EMAIL"
   git config push.followTags true
 fi
+rm -rf .gitname .gitemail .gitrepo .licensetype;
+
 git add .;
 git commit -s -m "project skeleton setup";
 
-rm -rf .gitname .gitemail .gitrepo .licensetype
+
