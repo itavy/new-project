@@ -1,0 +1,20 @@
+{
+  "name": "@itavy/new-project",
+  "version": "0.0.0",
+  "description": "New project skeleton",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org/itavy/new-project.git"
+  },
+  "keywords": [
+    "npm",
+    "new",
+    "package"
+  ],
+  "author": "Octavian Ionescu <itavyg@gmail.com>",
+  "license": "MIT"
+}
