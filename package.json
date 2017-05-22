@@ -8,13 +8,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org/itavy/new-project.git"
+    "url": "https://github.com/itavy/new-project.git"
   },
+  "bugs": {
+    "url": "https://github.com/itavy/new-project/issues"
+  },
+  "homepage": "https://github.com/itavy/new-project#readme",
   "keywords": [
     "npm",
     "new",
     "package"
   ],
-  "author": "Octavian Ionescu <itavyg@gmail.com>",
-  "license": "MIT"
+  "author": "Octavian Ionescu <itavyg@gmail.com> (https://github.com/itavy)",
+  "license": "MIT",
+  "engines" : {
+    "node" : ">=6.9.1"
+  }
 }
