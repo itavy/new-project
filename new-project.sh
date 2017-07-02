@@ -53,7 +53,7 @@ PROJ_YEAR=$(date +'%Y');
 
 npm install @itavy/test-utilities pre-commit eyes jsdoc jaguarjs-jsdoc jsdoc-to-markdown --save-dev;
 
-./node_modules/.bin/installCodingStandards;
+./node_modules/.bin/installCodingStandards.sh;
 
 rm -rf new-project.js jsdoc-template.json
 
