@@ -50,7 +50,7 @@ if (!Object.hasOwnProperty.call(origPackageJson, 'nyc')) {
     functions:        90,
     branches:         90,
     include:          [
-      'lib/es6/**/*.js'
+      'lib/**/*.js'
     ],
     reporter: [
       'lcov',
