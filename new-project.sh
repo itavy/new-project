@@ -35,6 +35,9 @@ if [ ! -f "jsdoc.json" ]; then
   curl -sq "$BASE_REPO/jsdoc-template.json" -o jsdoc-template.json
 fi
 
+if [ ! -f "index.js" ]; then
+  curl -sq "$BASE_REPO/index-template.js" -o index.js
+fi
 # init project if empty
 if [ ! -f "package.json" ]; then
   npm init;
@@ -47,6 +50,7 @@ PROJ_YEAR=$(date +'%Y');
 
 
 npm install \
+  semver \
   @itavy/test-utilities \
   mocha \
   tap \
