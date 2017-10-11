@@ -49,6 +49,7 @@ PROJ_YEAR=$(date +'%Y');
 npm install \
   @itavy/test-utilities \
   mocha \
+  tap \
   nyc \
   pre-commit \
   eyes \
