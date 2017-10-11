@@ -9,12 +9,17 @@ const externalInfo = {
 };
 const scripts = {
   test:               './node_modules/.bin/mocha',
-  coverage:           './node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha',
-  'coverage:check':   './node_modules/.bin/istanbul check-coverage',
   'test:check-style': './node_modules/.bin/eslint index.js "lib/**/*.js" "test/**/*.js"',
+  'test:coverage':    './node_modules/.bin/nyc npm test',
   docs:               './node_modules/.bin/jsdoc -c jsdoc.json',
   pretest:            'npm run test:check-style',
 };
+const preCommitHook = {
+  run: [
+    'test:check-style',
+  ],
+};
+
 const origPackageJson = require('./package.json');
 origPackageJson.scripts = Object.assign(origPackageJson.scripts, scripts);
 if (Object.hasOwnProperty.call(origPackageJson, 'repository')) {
@@ -29,6 +34,38 @@ if (Object.hasOwnProperty.call(origPackageJson, 'license')) {
 } else {
   console.log('no license');
 }
+
+if (!Object.hasOwnProperty.call(origPackageJson, 'pre-commit')) {
+  origPackageJson['pre-commit'] = preCommitHook;
+}
+
+if (!Object.hasOwnProperty.call(origPackageJson, 'nyc')) {
+  origPackageJson.nyc = {
+    all:              true,
+    color:            true,
+    'check-coverage': true,
+    'per-file':       true,
+    lines:            90,
+    statements:       90,
+    functions:        90,
+    branches:         90,
+    include:          [
+      'lib/es6/**/*.js'
+    ],
+    reporter: [
+      'lcov',
+      'text'
+    ],
+    watermarks: {
+      'check-coverage': true,
+      statements: [50, 90],
+      lines: [50, 90],
+      functions: [50, 90],
+      branches: [50, 90]
+    }
+  };
+}
+
 
 fs.writeFileSync('./package.json', JSON.stringify(origPackageJson, null, ' '));
 

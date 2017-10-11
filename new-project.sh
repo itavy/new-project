@@ -2,11 +2,6 @@
 set -e;
 BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master/"
 
-# istanbul
-if [ ! -f ".istanbul.yml" ]; then
-  curl -sq "$BASE_REPO/istanbul-template.yml" -o .istanbul.yml;
-fi
-
 # gitignore
 curl -sq "$BASE_REPO/gitignore-template" -o gitignore-template;
 if [ -f ".gitignore" ]; then
@@ -51,7 +46,16 @@ PROJ_AUTHOR_EMAIL=$(cat .gitemail);
 PROJ_YEAR=$(date +'%Y');
 
 
-npm install @itavy/test-utilities pre-commit eyes jsdoc jaguarjs-jsdoc jsdoc-to-markdown --save-dev;
+npm install \
+  @itavy/test-utilities \
+  mocha \
+  nyc \
+  pre-commit \
+  eyes \
+  jsdoc \
+  jaguarjs-jsdoc \
+  jsdoc-to-markdown \
+  --save-dev;
 
 ./node_modules/.bin/installCodingStandards.sh;
 
