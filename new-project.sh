@@ -35,13 +35,17 @@ if [ ! -f "jsdoc.json" ]; then
   curl -sq "$BASE_REPO/jsdoc-template.json" -o jsdoc-template.json
 fi
 
-if [ ! -f "index.js" ]; then
-  curl -sq "$BASE_REPO/index-template.js" -o index.js
-fi
 # init project if empty
 if [ ! -f "package.json" ]; then
   npm init;
 fi
+
+if [ ! -f "index.js" ]; then
+  curl -sq "$BASE_REPO/index-template.js" -o index.js
+  PROJ_NAME=$(grep -Po '"name": "\K[a-zA-Z0-9@/\-]*' package.json);
+  sed "s|<modulename>|$PROJ_NAME|g" -i index.js
+fi
+
 curl -sq "$BASE_REPO/new-project.js" -o new-project.js
 node ./new-project.js
 PROJ_AUTHOR_NAME=$(cat .gitname);

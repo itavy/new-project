@@ -2,24 +2,18 @@
 
 const semver = require('semver');
 
-/**
- * Lazy load es6 module
- * @returns {Object} es6 project module
- */
-const getModule = () => require('./lib'); // eslint-disable-line global-require
+const minNodeVersion = '8.9.0';
 
 /**
- * load module for current version of node
- * @param {Object} getParams conditions for loading module
- * @param {String} getParams.nodeVersion current verion of node
- * @returns {Object} project module
+ * check if min nodejs requirements are met
+ * @returns {module:<modulename>} manage-microservices module
  */
-const getModule = (getParams) => {
-  if (semver.gte(getParams.nodeVersion, 'v6.9.1')) {
-    return getES6Module();
+const getVersionModule = () => {
+  if (semver.lt(process.version, minNodeVersion)) {
+    throw Error(`Invalid node version for <modulename>, current: ${process.version}, min: ${minNodeVersion}`);
   }
-
-  throw new Error(`Invalid node version: ${getParams.nodeVersion}`);
+  // eslint-disable-next-line global-require
+  return require('./lib/latest');
 };
 
-module.exports = getModule({ nodeVersion: process.version });
+module.exports = getVersionModule();
