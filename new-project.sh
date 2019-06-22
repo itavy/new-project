@@ -1,5 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e;
+case "$(uname -s)" in
+  Darwin*)
+    SED_INPLACE_CMD="sed -i ''"
+    ;;
+  *)
+    SED_INPLACE_CMD="sed -i"
+    ;;
+esac
+
 BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master/"
 
 # gitignore
@@ -11,7 +20,7 @@ else
 fi
 cat gitignore-template >> ./.gitignore
 rm -rf gitignore-template;
-sed -i '/^\s*$/d' ./.gitignore
+${SED_INPLACE_CMD} '/^\s*$/d' ./.gitignore
 TEMP_FILE=$(mktemp);
 cat ./.gitignore | sort -u > "${TEMP_FILE}"
 mv "${TEMP_FILE}" ./.gitignore;
@@ -24,7 +33,7 @@ else
   echo "" > .npmignore;
 fi
 cat npmignore-template >> .npmignore;
-sed -i '/^\s*$/d' ./.npmignore
+${SED_INPLACE_CMD} '/^\s*$/d' ./.npmignore
 rm -rf npmignore-template;
 TEMP_FILE=$(mktemp);
 cat ./.npmignore | sort -u > "${TEMP_FILE}"
@@ -89,13 +98,13 @@ if [ ! -f "LICENSE.md" ]; then
   LICENSE_TYPE=$(cat .licensetype);
   if [ "$LICENSE_TYPE" == "ISC" ]; then
     curl -sq "$BASE_REPO/license-template-isc" -o LICENSE.md;
-    sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
-    sed -i "s/@/.at./" LICENSE.md;
+    ${SED_INPLACE_CMD} "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
+    ${SED_INPLACE_CMD} "s/@/.at./" LICENSE.md;
   else
     if [ "$LICENSE_TYPE" == "MIT" ]; then
       curl -sq "$BASE_REPO/license-template-mit" -o LICENSE.md;
-      sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
-      sed -i "s/@/.at./" LICENSE.md;
+      ${SED_INPLACE_CMD} "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
+      ${SED_INPLACE_CMD} "s/@/.at./" LICENSE.md;
     fi
   fi
 fi
