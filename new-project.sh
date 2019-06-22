@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e;
+set -ex;
 case "$(uname -s)" in
   Darwin*)
     SED_INPLACE_CMD="sed -i ''"
