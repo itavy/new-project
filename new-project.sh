@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -ex;
+set -e;
 PROJ_YEAR=$(date +'%Y');
 
-BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/feature/update-for-osx"
+BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master"
 
 # gitignore
 if [[ -f gitignore-template ]]; then
