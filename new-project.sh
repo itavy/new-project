@@ -1,43 +1,22 @@
 #!/usr/bin/env bash
 set -ex;
-case "$(uname -s)" in
-  Darwin*)
-    SED_INPLACE_CMD="sed -i ''"
-    ;;
-  *)
-    SED_INPLACE_CMD="sed -i"
-    ;;
-esac
+PROJ_YEAR=$(date +'%Y');
 
-BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/feature/update-for-osx/"
+BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/feature/update-for-osx"
 
 # gitignore
-curl -sq "$BASE_REPO/gitignore-template" -o gitignore-template;
-if [[ -f ".gitignore" ]]; then
-  echo "" >> ./.gitignore;
-else
-  touch ./.gitignore;
+if [[ -f gitignore-template ]]; then
+  rm -rf gitignore-template
 fi
-cat gitignore-template >> ./.gitignore
-rm -rf gitignore-template;
-$SED_INPLACE_CMD '/^\s*$/d' ./.gitignore
-TEMP_FILE=$(mktemp);
-cat ./.gitignore | sort -u > "${TEMP_FILE}"
-mv "${TEMP_FILE}" ./.gitignore;
+curl -sq "$BASE_REPO/gitignore-template" -o gitignore-template;
+mv ./gitignore-template ./.gitignore;
 
 # npmignore
-curl -sq "$BASE_REPO/npmignore-template" -o npmignore-template;
-if [[ -f ".npmignore" ]]; then
-  echo "" >> .npmignore;
-else
-  echo "" > .npmignore;
+if [[ -f npmignore-template ]]; then
+  rm -rf npmignore-template
 fi
-cat npmignore-template >> .npmignore;
-$SED_INPLACE_CMD '/^\s*$/d' ./.npmignore
-rm -rf npmignore-template;
-TEMP_FILE=$(mktemp);
-cat ./.npmignore | sort -u > "${TEMP_FILE}"
-mv "${TEMP_FILE}" ./.npmignore;
+curl -sq "$BASE_REPO/npmignore-template" -o npmignore-template;
+mv ./npmignore-template ./.npmignore;
 
 # jsdoc
 if [[ ! -f "jsdoc.json" ]]; then
@@ -60,11 +39,10 @@ LICENSE_TYPE=$(node ./new-project.js license)
 SETUP_GIT=$(node ./new-project.js gitRepo)
 
 if [[ ! -f "index.js" ]]; then
-  curl -sq "$BASE_REPO/index-template.js" -o index.js
-  $SED_INPLACE_CMD "s|<modulename>|$PROJ_NAME|g" index.js
+  curl -sq "$BASE_REPO/index-template.js" -o index-template.js
+  sed "s|<modulename>|$PROJ_NAME|g" index-template.js > index.js
 fi
 
-PROJ_YEAR=$(date +'%Y');
 
 
 npm install \
@@ -82,9 +60,6 @@ npm install \
 
 ./node_modules/.bin/installCodingStandards.sh;
 
-rm -rf new-project.js jsdoc-template.json
-
-
 # mocha
 if [[ ! -d "test" ]]; then
   mkdir test;
@@ -101,14 +76,14 @@ fi
 
 if [[ ! -f "LICENSE.md" ]]; then
   if [[ "$LICENSE_TYPE" == "ISC" ]]; then
-    curl -sq "$BASE_REPO/license-template-isc" -o LICENSE.md;
-    $SED_INPLACE_CMD "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
-    $SED_INPLACE_CMD "s/@/.at./" LICENSE.md;
+    curl -sq "$BASE_REPO/license-template-isc" -o LICENSE.md.template;
+    sed "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md.template > LICENSE.md;
+    sed "s/@/.at./" LICENSE.md.template > LICENSE.md;
   else
     if [[ "$LICENSE_TYPE" == "MIT" ]]; then
-      curl -sq "$BASE_REPO/license-template-mit" -o LICENSE.md;
-      $SED_INPLACE_CMD "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
-      $SED_INPLACE_CMD "s/@/.at./" LICENSE.md;
+      curl -sq "$BASE_REPO/license-template-mit" -o LICENSE.md.template;
+      sed "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md.template > LICENSE.md;
+      sed "s/@/.at./" LICENSE.md.template > LICENSE.md;
     fi
   fi
 fi
@@ -119,9 +94,10 @@ if [[ ! -d ".git" ]]; then
   git config user.email "$PROJ_AUTHOR_EMAIL"
   git config push.followTags true
 fi
-rm -rf .gitname .gitemail .gitrepo .licensetype;
+
+
+rm -rf new-project.js jsdoc-template.json LICENSE.md.template index-template.js
 
 git add .;
 git commit -s -m "project skeleton setup";
-
 
