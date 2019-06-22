@@ -9,7 +9,7 @@ case "$(uname -s)" in
     ;;
 esac
 
-BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master/"
+BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/feature/update-for-osx/"
 
 # gitignore
 curl -sq "$BASE_REPO/gitignore-template" -o gitignore-template;
@@ -49,16 +49,21 @@ if [[ ! -f "package.json" ]]; then
   npm init;
 fi
 
+curl -sq "$BASE_REPO/new-project.js" -o new-project.js
+node ./new-project.js pj
+node ./new-project.js jsdoc
+PROJ_NAME=$(node ./new-project.js name)
+PROJ_AUTHOR_NAME=$(node ./new-project.js author)
+PROJ_AUTHOR_EMAIL=$(node ./new-project.js email)
+PROJ_NAME=$(node ./new-project.js name)
+LICENSE_TYPE=$(node ./new-project.js license)
+SETUP_GIT=$(node ./new-project.js gitRepo)
+
 if [[ ! -f "index.js" ]]; then
   curl -sq "$BASE_REPO/index-template.js" -o index.js
-  PROJ_NAME=$(grep -Po '"name": "\K[a-zA-Z0-9@/\-]*' package.json);
-  sed "s|<modulename>|$PROJ_NAME|g" -i index.js
+  $SED_INPLACE_CMD "s|<modulename>|$PROJ_NAME|g" index.js
 fi
 
-curl -sq "$BASE_REPO/new-project.js" -o new-project.js
-node ./new-project.js
-PROJ_AUTHOR_NAME=$(cat .gitname);
-PROJ_AUTHOR_EMAIL=$(cat .gitemail);
 PROJ_YEAR=$(date +'%Y');
 
 
@@ -95,7 +100,6 @@ if [[ ! -f "README.md" ]]; then
 fi
 
 if [[ ! -f "LICENSE.md" ]]; then
-  LICENSE_TYPE=$(cat .licensetype);
   if [[ "$LICENSE_TYPE" == "ISC" ]]; then
     curl -sq "$BASE_REPO/license-template-isc" -o LICENSE.md;
     $SED_INPLACE_CMD "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
@@ -109,7 +113,6 @@ if [[ ! -f "LICENSE.md" ]]; then
   fi
 fi
 
-SETUP_GIT=$(cat .gitrepo);
 if [[ ! -d ".git" ]]; then
   git init;
   git config user.name "$PROJ_AUTHOR_NAME";
