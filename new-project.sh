@@ -1,56 +1,48 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e;
-BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master/"
+PROJ_YEAR=$(date +'%Y');
+
+BASE_REPO="https://raw.githubusercontent.com/itavy/new-project/master"
 
 # gitignore
-curl -sq "$BASE_REPO/gitignore-template" -o gitignore-template;
-if [ -f ".gitignore" ]; then
-  echo "" >> ./.gitignore;
-else
-  touch ./.gitignore;
+if [[ -f gitignore-template ]]; then
+  rm -rf gitignore-template
 fi
-cat gitignore-template >> ./.gitignore
-rm -rf gitignore-template;
-sed -i '/^\s*$/d' ./.gitignore
-TEMP_FILE=$(mktemp);
-cat ./.gitignore | sort -u > "${TEMP_FILE}"
-mv "${TEMP_FILE}" ./.gitignore;
+curl -sq "$BASE_REPO/gitignore-template" -o gitignore-template;
+mv ./gitignore-template ./.gitignore;
 
 # npmignore
-curl -sq "$BASE_REPO/npmignore-template" -o npmignore-template;
-if [ -f ".npmignore" ]; then
-  echo "" >> .npmignore;
-else
-  echo "" > .npmignore;
+if [[ -f npmignore-template ]]; then
+  rm -rf npmignore-template
 fi
-cat npmignore-template >> .npmignore;
-sed -i '/^\s*$/d' ./.npmignore
-rm -rf npmignore-template;
-TEMP_FILE=$(mktemp);
-cat ./.npmignore | sort -u > "${TEMP_FILE}"
-mv "${TEMP_FILE}" ./.npmignore;
+curl -sq "$BASE_REPO/npmignore-template" -o npmignore-template;
+mv ./npmignore-template ./.npmignore;
 
 # jsdoc
-if [ ! -f "jsdoc.json" ]; then
+if [[ ! -f "jsdoc.json" ]]; then
   curl -sq "$BASE_REPO/jsdoc-template.json" -o jsdoc-template.json
 fi
 
 # init project if empty
-if [ ! -f "package.json" ]; then
+if [[ ! -f "package.json" ]]; then
   npm init;
 fi
 
-if [ ! -f "index.js" ]; then
-  curl -sq "$BASE_REPO/index-template.js" -o index.js
-  PROJ_NAME=$(grep -Po '"name": "\K[a-zA-Z0-9@/\-]*' package.json);
-  sed "s|<modulename>|$PROJ_NAME|g" -i index.js
+curl -sq "$BASE_REPO/new-project.js" -o new-project.js
+node ./new-project.js pj
+node ./new-project.js jsdoc
+PROJ_NAME=$(node ./new-project.js name)
+PROJ_AUTHOR_NAME=$(node ./new-project.js author)
+PROJ_AUTHOR_EMAIL=$(node ./new-project.js email)
+PROJ_NAME=$(node ./new-project.js name)
+LICENSE_TYPE=$(node ./new-project.js license)
+SETUP_GIT=$(node ./new-project.js gitRepo)
+
+if [[ ! -f "index.js" ]]; then
+  curl -sq "$BASE_REPO/index-template.js" -o index-template.js
+  sed "s|<modulename>|$PROJ_NAME|g" index-template.js > index.js
 fi
 
-curl -sq "$BASE_REPO/new-project.js" -o new-project.js
-node ./new-project.js
-PROJ_AUTHOR_NAME=$(cat .gitname);
-PROJ_AUTHOR_EMAIL=$(cat .gitemail);
-PROJ_YEAR=$(date +'%Y');
 
 
 npm install \
@@ -68,48 +60,44 @@ npm install \
 
 ./node_modules/.bin/installCodingStandards.sh;
 
-rm -rf new-project.js jsdoc-template.json
-
-
 # mocha
-if [ ! -d "test" ]; then
+if [[ ! -d "test" ]]; then
   mkdir test;
   touch test/index.js;
 fi
-if [ ! -f "test/mocha.opts" ]; then
+if [[ ! -f "test/mocha.opts" ]]; then
   curl -sq "$BASE_REPO/mocha-template.opts" -o test/mocha.opts;
 fi
 
 # README
-if [ ! -f "README.md" ]; then
+if [[ ! -f "README.md" ]]; then
   touch README.md;
 fi
 
-if [ ! -f "LICENSE.md" ]; then
-  LICENSE_TYPE=$(cat .licensetype);
-  if [ "$LICENSE_TYPE" == "ISC" ]; then
-    curl -sq "$BASE_REPO/license-template-isc" -o LICENSE.md;
-    sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
-    sed -i "s/@/.at./" LICENSE.md;
+if [[ ! -f "LICENSE.md" ]]; then
+  if [[ "$LICENSE_TYPE" == "ISC" ]]; then
+    curl -sq "$BASE_REPO/license-template-isc" -o LICENSE.md.template;
+    sed "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md.template > LICENSE.md;
+    sed "s/@/.at./" LICENSE.md.template > LICENSE.md;
   else
-    if [ "$LICENSE_TYPE" == "MIT" ]; then
-      curl -sq "$BASE_REPO/license-template-mit" -o LICENSE.md;
-      sed -i "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md;
-      sed -i "s/@/.at./" LICENSE.md;
+    if [[ "$LICENSE_TYPE" == "MIT" ]]; then
+      curl -sq "$BASE_REPO/license-template-mit" -o LICENSE.md.template;
+      sed "s/YEAR NAME <email>/${PROJ_YEAR} ${PROJ_AUTHOR_NAME} <${PROJ_AUTHOR_EMAIL}>/" LICENSE.md.template > LICENSE.md;
+      sed "s/@/.at./" LICENSE.md.template > LICENSE.md;
     fi
   fi
 fi
 
-SETUP_GIT=$(cat .gitrepo);
-if [ ! -d ".git" ]; then
+if [[ ! -d ".git" ]]; then
   git init;
   git config user.name "$PROJ_AUTHOR_NAME";
   git config user.email "$PROJ_AUTHOR_EMAIL"
   git config push.followTags true
 fi
-rm -rf .gitname .gitemail .gitrepo .licensetype;
+
+
+rm -rf new-project.js jsdoc-template.json LICENSE.md.template index-template.js
 
 git add .;
 git commit -s -m "project skeleton setup";
-
 
